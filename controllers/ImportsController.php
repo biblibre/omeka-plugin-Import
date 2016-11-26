@@ -32,6 +32,8 @@ class Import_ImportsController extends Zend_Controller_Action
 
         $params = array(
             'import_id' => $this->getParam('id'),
+            'sort_field' => 'added',
+            'sort_dir' => 'd',
         );
 
         $importLogTable = $db->getTable('Import_Log');
