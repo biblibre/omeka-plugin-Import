@@ -18,12 +18,12 @@ class Import_Form_ImporterForm extends Omeka_Form
             'value' => isset($this->importer) ? $this->importer->name : null,
         ));
 
-        $this->addElement('select', 'reader', array(
+        $this->addElement('select', 'reader_name', array(
             'label' => __('Reader'),
             'multiOptions' => $this->getReaderOptions(),
         ));
 
-        $this->addElement('select', 'processor', array(
+        $this->addElement('select', 'processor_name', array(
             'label' => __('Processor'),
             'multiOptions' => $this->getProcessorOptions(),
         ));
@@ -34,8 +34,8 @@ class Import_Form_ImporterForm extends Omeka_Form
 
         $this->addDisplayGroup(array(
             'name',
-            'reader',
-            'processor',
+            'reader_name',
+            'processor_name',
         ), 'importer_info');
 
         $this->addDisplayGroup(array(
@@ -52,9 +52,10 @@ class Import_Form_ImporterForm extends Omeka_Form
     {
         $readerOptions = array();
 
-        $readers = Import::getReaders();
+        $readerManager = Zend_Registry::get('import_reader_manager');
+        $readers = $readerManager->getAll();
         foreach ($readers as $key => $reader) {
-            $readerOptions[$key] = $reader['name'];
+            $readerOptions[$key] = $reader->getLabel();
         }
 
         return $readerOptions;
@@ -64,9 +65,10 @@ class Import_Form_ImporterForm extends Omeka_Form
     {
         $processorOptions = array();
 
-        $processors = Import::getProcessors();
+        $processorManager = Zend_Registry::get('import_processor_manager');
+        $processors = $processorManager->getAll();
         foreach ($processors as $key => $processor) {
-            $processorOptions[$key] = $processor['name'];
+            $processorOptions[$key] = $processor->getLabel();
         }
 
         return $processorOptions;

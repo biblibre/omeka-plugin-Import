@@ -11,6 +11,11 @@ class Import_Reader_CsvReader
     protected $currentRowData;
     protected $headers;
 
+    public function getLabel()
+    {
+        return 'CSV';
+    }
+
     public function current()
     {
         $entry = new Import_Entry_CsvRow($this->headers, $this->currentRowData);

@@ -21,15 +21,15 @@
                     <tr>
                         <td><a href="<?php echo url("import/importers/{$importer->id}/start"); ?>"><?php echo $importer->name; ?></a></td>
                         <td>
-                            <?php echo $importer->reader; ?>
                             <?php $reader = $importer->getReader(); ?>
+                            <?php echo $reader->getLabel(); ?>
                             <?php if ($reader instanceof Import_Configurable): ?>
                                 (<a href="<?php echo url("import/importers/{$importer->id}/configure-reader"); ?>">Configure</a>)
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?php echo $importer->processor; ?>
                             <?php $processor = $importer->getProcessor(); ?>
+                            <?php echo $processor->getLabel(); ?>
                             <?php if ($processor instanceof Import_Configurable): ?>
                                 (<a href="<?php echo url("import/importers/{$importer->id}/configure-processor"); ?>">Configure</a>)
                             <?php endif; ?>

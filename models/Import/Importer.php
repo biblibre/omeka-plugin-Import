@@ -3,44 +3,38 @@
 class Import_Importer extends Omeka_Record_AbstractRecord
 {
     public $name;
-    public $reader;
+    public $reader_name;
     public $reader_config;
-    public $processor;
+    public $processor_name;
     public $processor_config;
 
-    protected $readerObject;
-    protected $processorObject;
+    protected $reader;
+    protected $processor;
 
     public function getReader()
     {
-        if (!isset($this->readerObject)) {
-            $readers = Import::getReaders();
-            if (array_key_exists($this->reader, $readers)) {
-                $readerFactoryClass = $readers[$this->reader]['factory'];
-                if (class_exists($readerFactoryClass)) {
-                    $readerFactory = new $readerFactoryClass();
-                    $this->readerObject = $readerFactory->create($this->getReaderConfig());
-                }
+        if (!isset($this->reader)) {
+            $readerManager = Zend_Registry::get('import_reader_manager');
+            $this->reader = $readerManager->get($this->reader_name);
+            if ($this->reader instanceof Import_Configurable) {
+                $this->reader->setConfig($this->getReaderConfig());
             }
         }
 
-        return $this->readerObject;
+        return $this->reader;
     }
 
     public function getProcessor()
     {
-        if (!isset($this->processorObject)) {
-            $processors = Import::getProcessors();
-            if (array_key_exists($this->processor, $processors)) {
-                $processorFactoryClass = $processors[$this->processor]['factory'];
-                if (class_exists($processorFactoryClass)) {
-                    $processorFactory = new $processorFactoryClass();
-                    $this->processorObject = $processorFactory->create($this->getProcessorConfig());
-                }
+        if (!isset($this->processor)) {
+            $processorManager = Zend_Registry::get('import_processor_manager');
+            $this->processor = $processorManager->get($this->processor_name);
+            if ($this->processor instanceof Import_Configurable) {
+                $this->processor->setConfig($this->getProcessorConfig());
             }
         }
 
-        return $this->processorObject;
+        return $this->processor;
     }
 
     public function setReaderConfig($config)

@@ -7,6 +7,11 @@ class Import_Processor_ItemsProcessor extends Import_Processor_AbstractProcessor
 
     protected $elements;
 
+    public function getLabel()
+    {
+        return 'Items';
+    }
+
     public function getConfigForm()
     {
         $options = array(

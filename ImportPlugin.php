@@ -30,9 +30,9 @@ class ImportPlugin extends Omeka_Plugin_AbstractPlugin
             CREATE TABLE IF NOT EXISTS `{$db->prefix}import_importers` (
                 `id` int unsigned NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) NOT NULL,
-                `reader` varchar(255) NOT NULL,
+                `reader_name` varchar(255) NOT NULL,
                 `reader_config` text NULL DEFAULT NULL,
-                `processor` varchar(255) NOT NULL,
+                `processor_name` varchar(255) NOT NULL,
                 `processor_config` text NULL DEFAULT NULL,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -91,6 +91,9 @@ class ImportPlugin extends Omeka_Plugin_AbstractPlugin
     {
         add_translation_source(dirname(__FILE__) . '/languages');
 
+        Zend_Registry::set('import_reader_manager', new Import_Reader_Manager());
+        Zend_Registry::set('import_processor_manager', new Import_Processor_Manager());
+
         $events = Zend_EventManager_StaticEventManager::getInstance();
         $events->attach(ImportPlugin::class, 'readers', array($this, 'getReaders'));
         $events->attach(ImportPlugin::class, 'processors', array($this, 'getProcessors'));
@@ -99,10 +102,7 @@ class ImportPlugin extends Omeka_Plugin_AbstractPlugin
     public function getReaders()
     {
         $readers = array(
-            'csv' => array(
-                'name' => 'CSV',
-                'factory' => 'Import_Reader_CsvReaderFactory',
-            ),
+            'csv' => 'Import_Reader_CsvReader',
         );
 
         return $readers;
@@ -111,10 +111,7 @@ class ImportPlugin extends Omeka_Plugin_AbstractPlugin
     public function getProcessors()
     {
         $processors = array(
-            'items' => array(
-                'name' => 'Items',
-                'factory' => 'Import_Processor_ItemsProcessorFactory',
-            ),
+            'items' => 'Import_Processor_ItemsProcessor',
         );
 
         return $processors;
