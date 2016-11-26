@@ -1,7 +1,10 @@
 <?php
 
-class Import_Reader_CsvReader extends Import_Reader_AbstractReader
+class Import_Reader_CsvReader
+    implements Import_Reader, Import_Configurable, Import_Parametrizable
 {
+    use Import_ConfigurableTrait, Import_ParametrizableTrait;
+
     protected $fh;
 
     protected $currentRow;
@@ -29,7 +32,7 @@ class Import_Reader_CsvReader extends Import_Reader_AbstractReader
     public function rewind()
     {
         if (!isset($this->fh)) {
-            $this->fh = fopen($this->getOption('filename'), 'r');
+            $this->fh = fopen($this->getParam('filename'), 'r');
         } else {
             fseek($this->fh, 0);
         }
@@ -48,7 +51,7 @@ class Import_Reader_CsvReader extends Import_Reader_AbstractReader
     {
         $fields = array();
 
-        $filename = $this->getOption('filename');
+        $filename = $this->getParam('filename');
         if ($filename) {
             $fh = fopen($filename, 'r');
             if (false !== $fh) {
@@ -58,11 +61,6 @@ class Import_Reader_CsvReader extends Import_Reader_AbstractReader
         }
 
         return $fields;
-    }
-
-    public function hasConfigForm()
-    {
-        return true;
     }
 
     public function getConfigForm()
@@ -84,23 +82,18 @@ class Import_Reader_CsvReader extends Import_Reader_AbstractReader
         $this->setConfig($config);
     }
 
-    public function hasOptionsForm()
+    public function getParamsForm()
     {
-        return true;
-    }
-
-    public function getOptionsForm()
-    {
-        return new Import_Form_CsvReaderOptionsForm(array(
+        return new Import_Form_CsvReaderParamsForm(array(
             'reader' => $this,
         ));
     }
 
-    public function handleOptionsForm(Zend_Form $form)
+    public function handleParamsForm(Zend_Form $form)
     {
         $values = $form->getValues();
         $filename = $form->file->getFileName();
-        $this->setOptions(array(
+        $this->setParams(array(
             'filename' => $filename,
             'delimiter' => $values['delimiter'],
             'enclosure' => $values['enclosure'],
@@ -110,9 +103,9 @@ class Import_Reader_CsvReader extends Import_Reader_AbstractReader
 
     protected function getRow($fh)
     {
-        $delimiter = $this->getOption('delimiter', ',');
-        $enclosure = $this->getOption('enclosure', '"');
-        $escape = $this->getOption('escape', '\\');
+        $delimiter = $this->getParam('delimiter', ',');
+        $enclosure = $this->getParam('enclosure', '"');
+        $escape = $this->getParam('escape', '\\');
 
         $fields = fgetcsv($fh, 0, $delimiter, $enclosure, $escape);
         if (is_array($fields)) {

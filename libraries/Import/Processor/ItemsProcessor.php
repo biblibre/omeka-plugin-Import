@@ -1,13 +1,11 @@
 <?php
 
 class Import_Processor_ItemsProcessor extends Import_Processor_AbstractProcessor
+    implements Import_Configurable, Import_Parametrizable
 {
-    protected $elements;
+    use Import_ConfigurableTrait, Import_ParametrizableTrait;
 
-    public function hasConfigForm()
-    {
-        return true;
-    }
+    protected $elements;
 
     public function getConfigForm()
     {
@@ -27,37 +25,32 @@ class Import_Processor_ItemsProcessor extends Import_Processor_AbstractProcessor
         $this->setConfig($config);
     }
 
-    public function hasOptionsForm()
-    {
-        return true;
-    }
-
-    public function getOptionsForm()
+    public function getParamsForm()
     {
         $options = array(
             'processor' => $this,
         );
 
-        return new Import_Form_ItemsProcessorOptionsForm($options);
+        return new Import_Form_ItemsProcessorParamsForm($options);
     }
 
-    public function handleOptionsForm(Zend_Form $form)
+    public function handleParamsForm(Zend_Form $form)
     {
         $values = $form->getValues();
-        $options = array(
+        $params = array(
             'mapping' => $values['mapping'],
             'collection_id' => $values['collection_id'],
         );
 
-        $this->setOptions($options);
+        $this->setParams($params);
     }
 
     public function process()
     {
         $db = get_db();
 
-        $mapping = $this->getOption('mapping', array());
-        $collection_id = $this->getOption('collection_id');
+        $mapping = $this->getParam('mapping', array());
+        $collection_id = $this->getParam('collection_id');
 
         foreach ($this->reader as $i => $entry) {
             $this->logger->log('Processing row ' . $i + 1, Zend_Log::NOTICE);

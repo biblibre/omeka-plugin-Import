@@ -1,6 +1,6 @@
 <?php
 
-class Import_Form_ItemsProcessorOptionsForm extends Omeka_Form
+class Import_Form_ItemsProcessorParamsForm extends Omeka_Form
 {
     protected $processor;
 

@@ -123,10 +123,10 @@ class Import_ImportersController extends Zend_Controller_Action
             $session->unsetAll();
         }
         if (isset($session->reader)) {
-            $reader->setOptions($session->reader);
+            $reader->setParams($session->reader);
         }
         if (isset($session->processor)) {
-            $processor->setOptions($session->processor);
+            $processor->setParams($session->processor);
         }
 
         $formsCallbacks = $this->getStartFormsCallbacks($importer);
@@ -139,18 +139,18 @@ class Import_ImportersController extends Zend_Controller_Action
                 $values = $form->getValues();
                 $session->{$currentForm} = $values;
                 if ($currentForm == 'reader') {
-                    $reader->handleOptionsForm($form);
-                    $session->reader = $reader->getOptions();
+                    $reader->handleParamsForm($form);
+                    $session->reader = $reader->getParams();
                     $formCallback = isset($formsCallbacks['processor']) ? $formsCallbacks['processor'] : $formsCallbacks['start'];
                 } elseif ($currentForm == 'processor') {
-                    $processor->handleOptionsForm($form);
-                    $session->processor = $processor->getOptions();
+                    $processor->handleParamsForm($form);
+                    $session->processor = $processor->getParams();
                     $formCallback = $formsCallbacks['start'];
                 } elseif ($currentForm == 'start') {
                     $import = new Import_Import;
                     $import->importer_id = $importer->id;
-                    $import->reader_options = serialize($reader->getOptions());
-                    $import->processor_options = serialize($processor->getOptions());
+                    $import->reader_params = serialize($reader->getParams());
+                    $import->processor_params = serialize($processor->getParams());
                     $import->status = 'queued';
                     $import->save();
                     $session->unsetAll();
@@ -188,9 +188,9 @@ class Import_ImportersController extends Zend_Controller_Action
         $formsCallbacks = array();
 
         $reader = $importer->getReader();
-        if ($reader->hasOptionsForm()) {
+        if ($reader instanceof Import_Parametrizable) {
             $formsCallbacks['reader'] = function() use($reader) {
-                $readerForm = $reader->getOptionsForm();
+                $readerForm = $reader->getParamsForm();
                 $readerForm->addElement('hidden', 'current_form', array(
                     'value' => 'reader',
                 ));
@@ -205,9 +205,9 @@ class Import_ImportersController extends Zend_Controller_Action
 
         $processor = $importer->getProcessor();
         $processor->setReader($reader);
-        if ($processor->hasOptionsForm()) {
+        if ($processor instanceof Import_Parametrizable) {
             $formsCallbacks['processor'] = function() use($processor) {
-                $processorForm = $processor->getOptionsForm();
+                $processorForm = $processor->getParamsForm();
                 $processorForm->addElement('hidden', 'current_form', array(
                     'value' => 'processor',
                 ));

@@ -1,6 +1,6 @@
 <?php
 
-class Import_Form_CsvReaderOptionsForm extends Omeka_Form
+class Import_Form_CsvReaderParamsForm extends Omeka_Form
 {
     protected $reader;
 
@@ -31,7 +31,7 @@ class Import_Form_CsvReaderOptionsForm extends Omeka_Form
             'delimiter',
             'enclosure',
             'escape',
-        ), 'csv_reader_options');
+        ), 'csv_reader_params');
     }
 
     public function setReader(Import_Reader $reader)

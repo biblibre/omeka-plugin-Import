@@ -11,10 +11,10 @@ class Import_Job_Import extends Omeka_Job_AbstractJob
 
         $importer = $import->getImporter();
         $reader = $importer->getReader();
-        $reader->setOptions($import->getReaderOptions());
+        $reader->setParams($import->getReaderParams());
         $processor = $importer->getProcessor();
         $processor->setReader($reader);
-        $processor->setOptions($import->getProcessorOptions());
+        $processor->setParams($import->getProcessorParams());
         $processor->setLogger($this->getLogger());
 
         try {

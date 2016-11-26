@@ -3,8 +3,8 @@
 class Import_Import extends Omeka_Record_AbstractRecord
 {
     public $importer_id;
-    public $reader_options;
-    public $processor_options;
+    public $reader_params;
+    public $processor_params;
     public $status;
     public $started;
     public $ended;
@@ -14,13 +14,13 @@ class Import_Import extends Omeka_Record_AbstractRecord
         return $this->getTable('Import_Importer')->find($this->importer_id);
     }
 
-    public function getReaderOptions()
+    public function getReaderParams()
     {
-        return unserialize($this->reader_options);
+        return unserialize($this->reader_params);
     }
 
-    public function getProcessorOptions()
+    public function getProcessorParams()
     {
-        return unserialize($this->processor_options);
+        return unserialize($this->processor_params);
     }
 }

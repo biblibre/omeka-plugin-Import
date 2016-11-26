@@ -42,8 +42,8 @@ class ImportPlugin extends Omeka_Plugin_AbstractPlugin
             CREATE TABLE IF NOT EXISTS `{$db->prefix}import_imports` (
                 `id` int unsigned NOT NULL AUTO_INCREMENT,
                 `importer_id` int unsigned NOT NULL,
-                `reader_options` text NULL DEFAULT NULL,
-                `processor_options` text NULL DEFAULT NULL,
+                `reader_params` text NULL DEFAULT NULL,
+                `processor_params` text NULL DEFAULT NULL,
                 `status` varchar(255) NULL DEFAULT NULL,
                 `started` timestamp NULL DEFAULT NULL,
                 `ended` timestamp NULL DEFAULT NULL,
