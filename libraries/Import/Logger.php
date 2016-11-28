@@ -7,8 +7,9 @@ class Import_Logger extends Zend_Log
     public function __construct (Zend_Log_Writer_Abstract $writer = null)
     {
         if (!isset($writer)) {
-            $dbAdapter = get_db()->getAdapter();
-            $writer = new Zend_Log_Writer_Db($dbAdapter, 'import_logs', array(
+            $db = get_db();
+            $dbAdapter = $db->getAdapter();
+            $writer = new Zend_Log_Writer_Db($dbAdapter, $db->Import_Log, array(
                 'severity' => 'priority',
                 'message' => 'message',
                 'import_id' => 'import_id',
