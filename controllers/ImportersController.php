@@ -149,8 +149,12 @@ class Import_ImportersController extends Zend_Controller_Action
                 } elseif ($currentForm == 'start') {
                     $import = new Import_Import;
                     $import->importer_id = $importer->id;
-                    $import->reader_params = serialize($reader->getParams());
-                    $import->processor_params = serialize($processor->getParams());
+                    if ($reader instanceof Import_Parametrizable) {
+                        $import->setReaderParams($reader->getParams());
+                    }
+                    if ($processor instanceof Import_Parametrizable) {
+                        $import->setProcessorParams($processor->getParams());
+                    }
                     $import->status = 'queued';
                     $import->save();
                     $session->unsetAll();
