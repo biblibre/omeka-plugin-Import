@@ -28,21 +28,26 @@ class Import_ImportsController extends Zend_Controller_Action
 
     public function logsAction()
     {
-        $db = $this->getHelper('Db');
-
-        $params = array(
-            'import_id' => $this->getParam('id'),
-            'sort_field' => 'added',
-            'sort_dir' => 'd',
-        );
-
+        $db = get_db();
         $importLogTable = $db->getTable('Import_Log');
+
+        $severity = (int) $this->getParam('severity', Zend_Log::NOTICE);
+
+        $select = $importLogTable->getSelect();
+        $select->where('import_id = ?', $this->getParam('id'));
+        $select->where('severity <= ?', $severity);
+        $importLogTable->applySorting($select, 'added', 'DESC');
 
         $currentPage = $this->getParam('page', 1);
         $recordsPerPage = 20;
-        $totalRecords = $importLogTable->count($params);
+        $selectForCount = clone $select;
+        $selectForCount->reset(Zend_Db_Select::COLUMNS);
+        $alias = $importLogTable->getTableAlias();
+        $selectForCount->from(array(), "COUNT(DISTINCT($alias.id))");
+        $totalRecords = $db->fetchOne($selectForCount);
 
-        $logs = $importLogTable->findBy($params, $recordsPerPage, $currentPage);
+        $select->limitPage($currentPage, $recordsPerPage);
+        $logs = $importLogTable->fetchObjects($select);
 
         Zend_Registry::set('pagination', array(
             'page' => $currentPage,
@@ -51,5 +56,6 @@ class Import_ImportsController extends Zend_Controller_Action
         ));
 
         $this->view->logs = $logs;
+        $this->view->severity = $severity;
     }
 }
